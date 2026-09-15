@@ -23,12 +23,12 @@ class CarrierWriterShim : public opentelemetry::context::propagation::TextMapCar
 public:
   CarrierWriterShim(const opentracing::TextMapWriter &writer) : writer_(writer) {}
 
-  virtual nostd::string_view Get(nostd::string_view) const noexcept override
+  nostd::string_view Get(nostd::string_view) const noexcept override
   {
     return {};  // Not required for Opentracing writer
   }
 
-  virtual void Set(nostd::string_view key, nostd::string_view value) noexcept override
+  void Set(nostd::string_view key, nostd::string_view value) noexcept override
   {
     writer_.Set(opentracing::string_view{key.data(), key.size()},
                 opentracing::string_view{value.data(), value.size()});
@@ -43,7 +43,7 @@ class CarrierReaderShim : public opentelemetry::context::propagation::TextMapCar
 public:
   CarrierReaderShim(const opentracing::TextMapReader &reader) : reader_(reader) {}
 
-  virtual nostd::string_view Get(nostd::string_view key) const noexcept override
+  nostd::string_view Get(nostd::string_view key) const noexcept override
   {
     nostd::string_view value;
 
@@ -69,12 +69,12 @@ public:
     return value;
   }
 
-  virtual void Set(nostd::string_view, nostd::string_view) noexcept override
+  void Set(nostd::string_view, nostd::string_view) noexcept override
   {
     // Not required for Opentracing reader
   }
 
-  virtual bool Keys(nostd::function_ref<bool(nostd::string_view)> callback) const noexcept override
+  bool Keys(nostd::function_ref<bool(nostd::string_view)> callback) const noexcept override
   {
     return reader_
         .ForeachKey([&callback](opentracing::string_view key,
